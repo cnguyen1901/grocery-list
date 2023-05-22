@@ -19,6 +19,23 @@ export const serverRouter = router({
     return ctx.prisma.groceryList.create({
       data: { title: input.title }
     })
+  }),
+  updateOne: publicProcedure.input(z.object({
+    id: z.number(),
+    title: z.string(),
+    checked: z.boolean()
+  })).mutation(({ input, ctx }) => {
+    const { id, ...rest } = input
+    return ctx.prisma.groceryList.update({
+      where: { id },
+      data: { ...rest }
+    })
+  }),
+  deleteAll: publicProcedure.input(z.object({
+    ids: z.number().array()
+  })).mutation(({ input, ctx }) => {
+    const { ids } = input
+    return ctx.prisma.groceryList.deleteMany({ where: { id: { in: ids } } })
   })
 })
 
