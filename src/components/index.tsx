@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import type { NextPage } from 'next';
-import { GroceryList } from '@prisma/client';
+import type { GroceryList } from '@prisma/client';
 
 interface CardProps {
   children: React.ReactNode;

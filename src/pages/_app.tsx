@@ -1,4 +1,4 @@
-import '@/src/styles/globals.css'
+import '@/styles/globals.css'
 import '@fontsource/poppins'
 import type { AppType } from 'next/app'
 import type { ServerRouter } from '@/server/router'

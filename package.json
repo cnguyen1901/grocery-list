@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrate:dev": "npx prisma migrate dev",
+    "migrate:deploy": "npx prisma migrate deploy"
   },
   "dependencies": {
     "@fontsource/poppins": "^4.5.10",

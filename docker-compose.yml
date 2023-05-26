@@ -2,7 +2,7 @@ version: '3.8'
 services:
   db:
     image: postgres:14.1-alpine
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=mydb
       - POSTGRES_USER=postgres
@@ -11,6 +11,25 @@ services:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - grocerylist
+  app:
+    platform: linux/amd64
+    build:
+      context: ./
+    volumes:
+      - .:/app
+    environment:
+      - DATABASE_URL=postgresql://postgres:randompassword@db:5432/mydb?schema=public
+    ports:
+      - "3000:3000"
+    # command: npm run migrate:deploy
+    networks:
+      - grocerylist
 volumes:
   db:
     driver: local
+
+networks:
+  grocerylist:
+    name: grocerylist
