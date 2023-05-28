@@ -48,6 +48,6 @@ jobs:
             --project $CLOUD_RUN_PROJECT_ID \
             --platform managed \
             --region $CLOUD_RUN_REGION \
-            --vpc-connector $SERVERLESS_VPC_CONNECTOR \
+            --vpc-connector grocery-list-connector \
             --allow-unauthenticated \
             --quiet
