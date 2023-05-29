@@ -49,5 +49,7 @@ jobs:
             --platform managed \
             --region $CLOUD_RUN_REGION \
             --vpc-connector grocery-list-connector \
+            --set-env-vars DATABASE_URL=postgresql://postgres:password123@localhost/mydb?host=/cloudsql/sanmarino-382515:us-central1:grocery-list \
+            --add-cloudsql-instances sanmarino-382515:us-central1:grocery-list \
             --allow-unauthenticated \
             --quiet
