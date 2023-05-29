@@ -41,6 +41,14 @@ jobs:
         run: |-
           docker push gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME:$GITHUB_SHA
 
+      - name: Run db migrations
+        run: |-
+          gcloud run jobs create dbmigrations
+            --image gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
+            --set-env-vars DATABASE_URL=postgresql://postgres:password123@localhost/mydb?host=/cloudsql/sanmarino-382515:us-central1:grocery-list \
+            --set-cloudsql-instances sanmarino-382515:us-central1:grocery-list \
+            --command "npm run migrate:deploy" --execute-now
+
       - name: Deploy
         run: |-
           gcloud components install beta --quiet
