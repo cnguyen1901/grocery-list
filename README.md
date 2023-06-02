@@ -16,3 +16,9 @@ SERVERLESS_VPC_CONNECTOR: the name of the vpc connector
 DB_URL: postgresql://<username>:<password>@localhost/<db_name>?host=/cloudsql/<instance-connection-name>
 CLOUDSQL_INSTANCE_ID
 ```
+## TODO
+- figure out how to run npx prisma deploy with Docker non-root user. Right now if we try running it using
+non-root user, we'd get hit by the following error
+```
+[Your cache folder contains root-owned files, due to a bug in previous versions of npm which has since been addressed sudo chown -R 1001:65533 "/home/.npm"]
+```
