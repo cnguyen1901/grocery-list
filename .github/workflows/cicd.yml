@@ -3,13 +3,14 @@ name: nextjs-cloud-run
 on:
   push:
     branches:
-      - master
       - main
 
 env:
   CLOUD_RUN_PROJECT_ID: ${{ secrets.CLOUD_RUN_PROJECT_NAME }}
+  SERVERLESS_VPC_CONNECTOR: ${{ secrets.SERVERLESS_VPC_CONNECTOR }}
+  DB_URL: ${{ secrets.DB_URL }}
   CLOUD_RUN_REGION: us-central1
-  # project-name but it can be anything you want
+  CLOUDSQL_INSTANCE_ID: ${{ secrets.CLOUDSQL_INSTANCE_ID }}
   REPO_NAME: grocery-list
 
 jobs:
@@ -43,11 +44,14 @@ jobs:
 
       - name: Run db migrations
         run: |-
-          gcloud run jobs create dbmigrations
-            --image gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
-            --set-env-vars DATABASE_URL=postgresql://postgres:password123@localhost/mydb?host=/cloudsql/sanmarino-382515:us-central1:grocery-list \
-            --set-cloudsql-instances sanmarino-382515:us-central1:grocery-list \
-            --command "npm run migrate:deploy" --execute-now
+          gcloud components install beta --quiet
+          gcloud beta run jobs create "db-migrations-${GITHUB_SHA::7}" --image gcr.io/$CLOUD_RUN_PROJECT_ID/$REPO_NAME:$GITHUB_SHA \
+            --set-env-vars DATABASE_URL=$DB_URL \
+            --set-cloudsql-instances $CLOUD_RUN_PROJECT_ID:$CLOUD_RUN_REGION:$CLOUDSQL_INSTANCE_ID \
+            --vpc-connector $SERVERLESS_VPC_CONNECTOR \
+            --region $CLOUD_RUN_REGION \
+            --command "/bin/sh" --args="/app/scripts/migrate.sh" \
+            --wait
 
       - name: Deploy
         run: |-
@@ -56,8 +60,8 @@ jobs:
             --project $CLOUD_RUN_PROJECT_ID \
             --platform managed \
             --region $CLOUD_RUN_REGION \
-            --vpc-connector grocery-list-connector \
-            --set-env-vars DATABASE_URL=postgresql://postgres:password123@localhost/mydb?host=/cloudsql/sanmarino-382515:us-central1:grocery-list \
-            --add-cloudsql-instances sanmarino-382515:us-central1:grocery-list \
+            --vpc-connector $SERVERLESS_VPC_CONNECTOR \
+            --set-env-vars DATABASE_URL=$DB_URL \
+            --add-cloudsql-instances $CLOUD_RUN_PROJECT_ID:$CLOUD_RUN_REGION:$CLOUDSQL_INSTANCE_ID \
             --allow-unauthenticated \
             --quiet

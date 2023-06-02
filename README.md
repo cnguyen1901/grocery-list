@@ -1,34 +1,18 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Simple Grocery List App
 
-## Getting Started
+This app explores the following tech stack: Next.js, tRPC, Prisma and Tailwind CSS
 
-First, run the development server:
+![image](https://res.cloudinary.com/dj5iihhqv/image/upload/v1654636896/Kapture_2022-06-07_at_22.19.07-min_vsi8p5.gif)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+This project follows this tutorial to set up Cloud SQL with a private IP and Cloud Run. [learn more](https://codelabs.developers.google.com/connecting-to-private-cloudsql-from-cloud-run#0)
+
+A github actions pipeline has been included to deploy the app to GCP.
+
+Below secrets need to be set in github for the pipeline to be fully functional.
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+CLOUD_RUN_PROJECT_NAME: the project id
+SERVERLESS_VPC_CONNECTOR: the name of the vpc connector
+DB_URL: postgresql://<username>:<password>@localhost/<db_name>?host=/cloudsql/<instance-connection-name>
+CLOUDSQL_INSTANCE_ID
+```
