@@ -8,6 +8,79 @@ This project follows this tutorial to set up Cloud SQL with a private IP and Clo
 
 A github actions pipeline has been included to deploy the app to GCP.
 
+## Setup
+1.
+```
+gcloud services enable \
+    sqladmin.googleapis.com \
+    run.googleapis.com \
+    vpcaccess.googleapis.com \
+    servicenetworking.googleapis.com
+```
+
+2.
+```
+export PROJECT_ID=$(gcloud config get-value project)
+export SERVERLESS_VPC_CONNECTOR=grocery-list-connector
+export DB_INSTANCE_NAME=grocery-list
+export DB_INSTANCE_PASSWORD=password123
+export DB_DATABASE=mydb
+export DB_USER=postgres
+export DB_PASSWORD=password123
+export REGION=us-central1
+```
+
+3.
+```
+gcloud compute addresses create google-managed-services-default \
+    --global \
+    --purpose=VPC_PEERING \
+    --prefix-length=20 \
+    --network=projects/$PROJECT_ID/global/networks/default
+```
+
+4.
+```
+gcloud services vpc-peerings connect \
+    --service=servicenetworking.googleapis.com \
+    --ranges=google-managed-services-default \
+    --network=default \
+    --project=$PROJECT_ID
+```
+
+5.
+```
+gcloud sql instances create $DB_INSTANCE_NAME \
+    --project=$PROJECT_ID \
+    --network=projects/$PROJECT_ID/global/networks/default \
+    --no-assign-ip \
+    --database-version=POSTGRES_12 \
+    --cpu=2 \
+    --memory=4GB \
+    --region=$REGION \
+    --root-password=${DB_INSTANCE_PASSWORD}
+```
+
+6.
+```
+gcloud sql databases create $DB_DATABASE --instance=$DB_INSTANCE_NAME
+```
+
+7.
+```
+gcloud sql users create ${DB_USER} \
+    --password=$DB_PASSWORD \
+    --instance=$DB_INSTANCE_NAME
+```
+
+8.
+```
+gcloud compute networks vpc-access connectors create ${SERVERLESS_VPC_CONNECTOR} \
+    --region=${REGION} \
+    --range=10.8.0.0/28
+```
+
+
 Below secrets need to be set in github for the pipeline to be fully functional.
 
 ```

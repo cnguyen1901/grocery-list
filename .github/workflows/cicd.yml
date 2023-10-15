@@ -18,3 +18,14 @@ jobs:
     with:
       environment: dev
 
+  deploy-non-prod:
+    needs: deploy-dev
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+      id-token: write
+    uses: cnguyen1901/reusable-workflow/.github/workflows/build-and-deploy.yml@main
+    secrets: inherit
+    with:
+      environment: non-prod
